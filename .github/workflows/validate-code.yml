@@ -1,0 +1,30 @@
+name: Validate Code
+
+on:
+  push:
+    branches:
+      - feature/**
+      - release/**
+      - hotfix/**
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: usafder/setup-node-with-cache@v1.0.0
+        with:
+          NODE_VERSION: 20.5.1
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build NextJS
+        run: npm run build
+
+      - name: Run Cypress Test
+        run: npm run cypress:test
