@@ -1,0 +1,37 @@
+name: Deploy To Dev
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install Node
+        uses: usafder/setup-node-with-cache@v1.0.0
+        with:
+          NODE_VERSION: 20.5.1
+
+      - name: Install Global Vercel Package
+        run: npm install --global vercel@latest
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Build NextJS
+        run: npm run build
+
+      - name: Run Cypress Test
+        run: npm run cypress:test
+
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=development --token=${{secrets.VERCEL_TOKEN}}
+
+      - name: Vercel Build
+        run: vercel build --token=${{secrets.VERCEL_TOKEN}}
